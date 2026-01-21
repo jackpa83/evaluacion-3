@@ -24,13 +24,11 @@ const LoanPage: NextPage = () => {
     if (value.length <= 8) setForm({ ...form, cedula: value });
   };
 
-  // Validación numérica para Teléfono (Máximo 11)
   const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
     if (value.length <= 11) setForm({ ...form, telefono: value });
   };
 
-  // El botón se habilita con cédula (7-8) y teléfono (al menos 10 para fijos o 11 para móvil)
   const isFormIncomplete =
     !form.nombre || !form.apellido || form.cedula.length < 7 || form.telefono.length < 10 || !form.trayecto;
 
@@ -40,9 +38,9 @@ const LoanPage: NextPage = () => {
         functionName: "solicitarPrestamo",
         args: [form.nombre, form.apellido, form.cedula, form.telefono, form.trayecto, form.tipoEquipo],
       });
-      alert("¡Préstamo Validado!");
     } catch (e: any) {
-      alert("Error: " + (e.shortMessage || "Verifique sus datos."));
+      console.log(e);
+      // toast.error("Error: " + (e.shortMessage || "Verifique sus datos."));
     }
   };
 

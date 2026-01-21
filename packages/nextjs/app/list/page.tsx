@@ -22,10 +22,8 @@ const ListadoPage: NextPage = () => {
         functionName: "devolverEquipo",
         args: [id],
       });
-      alert("¡Equipo devuelto con éxito!");
     } catch (e) {
       console.error(e);
-      alert("Error al devolver el equipo");
     }
   };
 
