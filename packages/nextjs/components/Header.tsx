@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { hardhat } from "viem/chains";
 import { PencilIcon } from "@heroicons/react/20/solid";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
+import { ListBulletIcon } from "@heroicons/react/24/solid";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 
@@ -21,6 +22,11 @@ export const menuLinks: HeaderMenuLink[] = [
     label: "Préstamo",
     href: "/",
     icon: <PencilIcon className="h-4 w-4" />,
+  },
+  {
+    label: "Listado",
+    href: "/list",
+    icon: <ListBulletIcon className="h-4 w-4" />,
   },
   {
     label: "Debug Contracts",

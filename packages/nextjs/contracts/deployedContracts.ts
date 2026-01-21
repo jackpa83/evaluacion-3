@@ -7,44 +7,79 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SistemaPrestamos: {
-      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
       abi: [
         {
-          anonymous: false,
           inputs: [
             {
-              indexed: true,
-              internalType: "address",
-              name: "usuario",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "nombre",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "equipo",
-              type: "string",
-            },
-            {
-              indexed: false,
               internalType: "uint256",
-              name: "fecha",
+              name: "_id",
               type: "uint256",
             },
           ],
-          name: "NuevoPrestamo",
-          type: "event",
-        },
-        {
-          inputs: [],
           name: "devolverEquipo",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "obtenerTodosLosPrestamos",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "id",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "nombre",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "apellido",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "cedula",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "telefono",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "trayecto",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "tipoEquipo",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fechaPrestamo",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "activo",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct SistemaPrestamos.Prestamo[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -55,8 +90,83 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "prestamosActivos",
+          name: "prestamoActualPorUsuario",
           outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proximoId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_nombre",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_apellido",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_cedula",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_telefono",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_trayecto",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_tipoEquipo",
+              type: "string",
+            },
+          ],
+          name: "solicitarPrestamo",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "todosLosPrestamos",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
             {
               internalType: "string",
               name: "nombre",
@@ -101,47 +211,9 @@ const deployedContracts = {
           stateMutability: "view",
           type: "function",
         },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_nombre",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_apellido",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_cedula",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_telefono",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_trayecto",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "_tipoEquipo",
-              type: "string",
-            },
-          ],
-          name: "solicitarPrestamo",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 3,
+      deployedOnBlock: 15,
     },
   },
 } as const;

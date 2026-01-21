@@ -18,14 +18,21 @@ const LoanPage: NextPage = () => {
     contractName: "SistemaPrestamos",
   });
 
+  // Validación numérica para Cédula (Máximo 8)
   const handleCedulaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
-    if (value.length <= 8) {
-      setForm({ ...form, cedula: value });
-    }
+    if (value.length <= 8) setForm({ ...form, cedula: value });
   };
 
-  const isFormIncomplete = !form.nombre || !form.apellido || form.cedula.length < 7 || !form.telefono || !form.trayecto;
+  // Validación numérica para Teléfono (Máximo 11)
+  const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= 11) setForm({ ...form, telefono: value });
+  };
+
+  // El botón se habilita con cédula (7-8) y teléfono (al menos 10 para fijos o 11 para móvil)
+  const isFormIncomplete =
+    !form.nombre || !form.apellido || form.cedula.length < 7 || form.telefono.length < 10 || !form.trayecto;
 
   const handleSolicitar = async () => {
     try {
@@ -35,8 +42,7 @@ const LoanPage: NextPage = () => {
       });
       alert("¡Préstamo Validado!");
     } catch (e: any) {
-      console.error("Error al solicitar préstamo:", e);
-      alert("Error en la transacción: " + (e.shortMessage || "Verifique los datos o si ya posee un préstamo activo."));
+      alert("Error: " + (e.shortMessage || "Verifique sus datos."));
     }
   };
 
@@ -45,10 +51,9 @@ const LoanPage: NextPage = () => {
       <div className="card max-w-xl w-full bg-base-100 shadow-xl border border-gray-200">
         <div className="card-body p-8">
           <h2 className="card-title text-2xl font-bold mb-1">Solicitud de Equipo</h2>
-          <p className="text-sm mb-8 opacity-60">Ingrese los datos solicitados para realizar el préstamo.</p>
+          <p className="text-sm mb-8 opacity-60">Complete los campos numéricos y personales.</p>
 
           <div className="flex flex-col gap-5">
-            {/* Fila: Nombre y Apellido */}
             <div className="flex flex-col md:flex-row gap-5">
               <div className="form-control w-full">
                 <label className="label py-1">
@@ -76,7 +81,6 @@ const LoanPage: NextPage = () => {
               </div>
             </div>
 
-            {/* Fila: Cédula y Teléfono */}
             <div className="flex flex-col md:flex-row gap-5">
               <div className="form-control w-full">
                 <label className="label py-1">
@@ -97,15 +101,15 @@ const LoanPage: NextPage = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Ej. 04161234567"
+                  inputMode="numeric"
+                  placeholder="Ej. 04121234567"
                   className="input input-bordered w-full"
                   value={form.telefono}
-                  onChange={e => setForm({ ...form, telefono: e.target.value })}
+                  onChange={handleTelefonoChange}
                 />
               </div>
             </div>
 
-            {/* Trayecto */}
             <div className="form-control w-full">
               <label className="label py-1">
                 <span className="label-text font-medium">Trayecto</span>
@@ -119,7 +123,6 @@ const LoanPage: NextPage = () => {
               />
             </div>
 
-            {/* Tipo de Equipo */}
             <div className="form-control w-full">
               <label className="label py-1">
                 <span className="label-text font-medium">Tipo de Equipo</span>

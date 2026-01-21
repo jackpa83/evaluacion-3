@@ -3,23 +3,24 @@ pragma solidity ^0.8.19;
 
 contract SistemaPrestamos {
     struct Prestamo {
+        uint256 id;
         string nombre;
         string apellido;
         string cedula;
         string telefono;
         string trayecto;
-        string tipoEquipo; // Ej: "Video Bean" o "Laboratorio"
+        string tipoEquipo;
         uint256 fechaPrestamo;
         bool activo;
     }
 
-    // Mapeo para guardar el préstamo actual por cada dirección de billetera
-    mapping(address => Prestamo) public prestamosActivos;
+    uint256 public proximoId;
+    mapping(uint256 => Prestamo) public todosLosPrestamos;
+    mapping(address => uint256) public prestamoActualPorUsuario;
 
-    // Evento para generar el "Reporte" en el frontend
-    event NuevoPrestamo(address indexed usuario, string nombre, string equipo, uint256 fecha);
+    // Guardamos los IDs para poder iterar sobre ellos
+    uint256[] private IDs;
 
-    // FUNCIÓN PRINCIPAL CON VALIDACIÓN
     function solicitarPrestamo(
         string memory _nombre,
         string memory _apellido,
@@ -28,11 +29,12 @@ contract SistemaPrestamos {
         string memory _trayecto,
         string memory _tipoEquipo
     ) public {
-        // VALIDACIÓN: Si el usuario ya tiene un equipo, no puede pedir otro
-        require(!prestamosActivos[msg.sender].activo, "Ya tienes un equipo en prestamo.");
+        uint256 idActual = prestamoActualPorUsuario[msg.sender];
+        require(!todosLosPrestamos[idActual].activo, "Ya tienes un equipo en prestamo.");
 
-        // Registro de los datos básicos solicitados
-        prestamosActivos[msg.sender] = Prestamo({
+        proximoId++;
+        Prestamo memory nuevo = Prestamo({
+            id: proximoId,
             nombre: _nombre,
             apellido: _apellido,
             cedula: _cedula,
@@ -43,12 +45,27 @@ contract SistemaPrestamos {
             activo: true
         });
 
-        // Emitir evento para el reporte
-        emit NuevoPrestamo(msg.sender, _nombre, _tipoEquipo, block.timestamp);
+        todosLosPrestamos[proximoId] = nuevo;
+        IDs.push(proximoId);
+        prestamoActualPorUsuario[msg.sender] = proximoId;
     }
 
-    function devolverEquipo() public {
-        require(prestamosActivos[msg.sender].activo, "No tienes equipos pendientes.");
-        prestamosActivos[msg.sender].activo = false;
+    // LA FUNCIÓN CLAVE: Devuelve todo el array de una vez
+    function obtenerTodosLosPrestamos() public view returns (Prestamo[] memory) {
+        Prestamo[] memory lista = new Prestamo[](IDs.length);
+        for (uint256 i = 0; i < IDs.length; i++) {
+            lista[i] = todosLosPrestamos[IDs[i]];
+        }
+        return lista;
+    }
+
+    function devolverEquipo(uint256 _id) public {
+        // Validar que el préstamo existe y está activo
+        require(todosLosPrestamos[_id].id != 0, "El prestamo no existe.");
+        require(todosLosPrestamos[_id].activo, "El equipo ya fue devuelto.");
+
+        // Solo el dueño del contrato o la persona que pidió el equipo debería poder devolverlo
+        // (Opcional: para el MVP dejémoslo abierto o solo para el sender)
+        todosLosPrestamos[_id].activo = false;
     }
 }
