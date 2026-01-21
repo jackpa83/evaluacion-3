@@ -4,6 +4,146 @@
  */
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
-const deployedContracts = {} as const;
+const deployedContracts = {
+  31337: {
+    SistemaPrestamos: {
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "usuario",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "equipo",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "fecha",
+              type: "uint256",
+            },
+          ],
+          name: "NuevoPrestamo",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "devolverEquipo",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "prestamosActivos",
+          outputs: [
+            {
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "apellido",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "cedula",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "telefono",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "trayecto",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "tipoEquipo",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "fechaPrestamo",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "activo",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_nombre",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_apellido",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_cedula",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_telefono",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_trayecto",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_tipoEquipo",
+              type: "string",
+            },
+          ],
+          name: "solicitarPrestamo",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 3,
+    },
+  },
+} as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;

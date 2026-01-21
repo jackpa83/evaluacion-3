@@ -1,81 +1,153 @@
 "use client";
 
-import Link from "next/link";
-import { Address } from "@scaffold-ui/components";
+import { useState } from "react";
 import type { NextPage } from "next";
-import { hardhat } from "viem/chains";
-import { useAccount } from "wagmi";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
-const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
-  const { targetNetwork } = useTargetNetwork();
+const LoanPage: NextPage = () => {
+  const [form, setForm] = useState({
+    nombre: "",
+    apellido: "",
+    cedula: "",
+    telefono: "",
+    trayecto: "",
+    tipoEquipo: "Video Bean",
+  });
+
+  const { writeContractAsync } = useScaffoldWriteContract({
+    contractName: "SistemaPrestamos",
+  });
+
+  const handleCedulaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= 8) {
+      setForm({ ...form, cedula: value });
+    }
+  };
+
+  const isFormIncomplete = !form.nombre || !form.apellido || form.cedula.length < 7 || !form.telefono || !form.trayecto;
+
+  const handleSolicitar = async () => {
+    try {
+      await writeContractAsync({
+        functionName: "solicitarPrestamo",
+        args: [form.nombre, form.apellido, form.cedula, form.telefono, form.trayecto, form.tipoEquipo],
+      });
+      alert("¡Préstamo Validado!");
+    } catch (e: any) {
+      console.error("Error al solicitar préstamo:", e);
+      alert("Error en la transacción: " + (e.shortMessage || "Verifique los datos o si ya posee un préstamo activo."));
+    }
+  };
 
   return (
-    <>
-      <div className="flex items-center flex-col grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <div className="flex justify-center items-center space-x-2 flex-col">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address
-              address={connectedAddress}
-              chain={targetNetwork}
-              blockExplorerAddressLink={
-                targetNetwork.id === hardhat.id ? `/blockexplorer/address/${connectedAddress}` : undefined
-              }
-            />
-          </div>
+    <div className="flex justify-center p-8">
+      <div className="card max-w-xl w-full bg-base-100 shadow-xl border border-gray-200">
+        <div className="card-body p-8">
+          <h2 className="card-title text-2xl font-bold mb-1">Solicitud de Equipo</h2>
+          <p className="text-sm mb-8 opacity-60">Ingrese los datos solicitados para realizar el préstamo.</p>
 
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
-        </div>
-
-        <div className="grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col md:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contracts
-                </Link>{" "}
-                tab.
-              </p>
+          <div className="flex flex-col gap-5">
+            {/* Fila: Nombre y Apellido */}
+            <div className="flex flex-col md:flex-row gap-5">
+              <div className="form-control w-full">
+                <label className="label py-1">
+                  <span className="label-text font-medium">Nombre</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Juan"
+                  className="input input-bordered w-full"
+                  value={form.nombre}
+                  onChange={e => setForm({ ...form, nombre: e.target.value })}
+                />
+              </div>
+              <div className="form-control w-full">
+                <label className="label py-1">
+                  <span className="label-text font-medium">Apellido</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Pérez"
+                  className="input input-bordered w-full"
+                  value={form.apellido}
+                  onChange={e => setForm({ ...form, apellido: e.target.value })}
+                />
+              </div>
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+
+            {/* Fila: Cédula y Teléfono */}
+            <div className="flex flex-col md:flex-row gap-5">
+              <div className="form-control w-full">
+                <label className="label py-1">
+                  <span className="label-text font-medium">Cédula</span>
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Solo números"
+                  className="input input-bordered w-full"
+                  value={form.cedula}
+                  onChange={handleCedulaChange}
+                />
+              </div>
+              <div className="form-control w-full">
+                <label className="label py-1">
+                  <span className="label-text font-medium">Teléfono</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. 04161234567"
+                  className="input input-bordered w-full"
+                  value={form.telefono}
+                  onChange={e => setForm({ ...form, telefono: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {/* Trayecto */}
+            <div className="form-control w-full">
+              <label className="label py-1">
+                <span className="label-text font-medium">Trayecto</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Ej. Trayecto II"
+                className="input input-bordered w-full"
+                value={form.trayecto}
+                onChange={e => setForm({ ...form, trayecto: e.target.value })}
+              />
+            </div>
+
+            {/* Tipo de Equipo */}
+            <div className="form-control w-full">
+              <label className="label py-1">
+                <span className="label-text font-medium">Tipo de Equipo</span>
+              </label>
+              <select
+                className="select select-bordered w-full"
+                value={form.tipoEquipo}
+                onChange={e => setForm({ ...form, tipoEquipo: e.target.value })}
+              >
+                <option>Video Bean</option>
+                <option>Laboratorio</option>
+              </select>
+            </div>
+
+            <div className="card-actions mt-6">
+              <button
+                className="btn btn-primary w-full shadow-md"
+                onClick={handleSolicitar}
+                disabled={isFormIncomplete}
+              >
+                Hacer préstamo
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
-export default Home;
+export default LoanPage;
