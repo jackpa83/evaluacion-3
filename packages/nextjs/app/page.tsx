@@ -87,7 +87,7 @@ const LoanPage: NextPage = () => {
                 <input
                   type="text"
                   inputMode="numeric"
-                  placeholder="Solo números"
+                  placeholder="294123456"
                   className="input input-bordered w-full"
                   value={form.cedula}
                   onChange={handleCedulaChange}

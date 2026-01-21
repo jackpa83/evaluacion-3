@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 contract SistemaPrestamos {
     struct Prestamo {
         uint256 id;
+        address solicitante; // <--- Nuevo campo para seguridad
         string nombre;
         string apellido;
         string cedula;
@@ -17,8 +18,6 @@ contract SistemaPrestamos {
     uint256 public proximoId;
     mapping(uint256 => Prestamo) public todosLosPrestamos;
     mapping(address => uint256) public prestamoActualPorUsuario;
-
-    // Guardamos los IDs para poder iterar sobre ellos
     uint256[] private IDs;
 
     function solicitarPrestamo(
@@ -33,8 +32,9 @@ contract SistemaPrestamos {
         require(!todosLosPrestamos[idActual].activo, "Ya tienes un equipo en prestamo.");
 
         proximoId++;
-        Prestamo memory nuevo = Prestamo({
+        todosLosPrestamos[proximoId] = Prestamo({
             id: proximoId,
+            solicitante: msg.sender, // Guardamos quien lo pidio
             nombre: _nombre,
             apellido: _apellido,
             cedula: _cedula,
@@ -45,12 +45,10 @@ contract SistemaPrestamos {
             activo: true
         });
 
-        todosLosPrestamos[proximoId] = nuevo;
         IDs.push(proximoId);
         prestamoActualPorUsuario[msg.sender] = proximoId;
     }
 
-    // LA FUNCIÓN CLAVE: Devuelve todo el array de una vez
     function obtenerTodosLosPrestamos() public view returns (Prestamo[] memory) {
         Prestamo[] memory lista = new Prestamo[](IDs.length);
         for (uint256 i = 0; i < IDs.length; i++) {
@@ -60,12 +58,12 @@ contract SistemaPrestamos {
     }
 
     function devolverEquipo(uint256 _id) public {
-        // Validar que el préstamo existe y está activo
         require(todosLosPrestamos[_id].id != 0, "El prestamo no existe.");
         require(todosLosPrestamos[_id].activo, "El equipo ya fue devuelto.");
 
-        // Solo el dueño del contrato o la persona que pidió el equipo debería poder devolverlo
-        // (Opcional: para el MVP dejémoslo abierto o solo para el sender)
+        // SEGURIDAD: Solo el solicitante original puede devolverlo
+        require(todosLosPrestamos[_id].solicitante == msg.sender, "No eres el dueno de este prestamo.");
+
         todosLosPrestamos[_id].activo = false;
     }
 }
