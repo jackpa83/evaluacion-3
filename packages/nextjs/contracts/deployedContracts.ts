@@ -7,8 +7,13 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     SistemaPrestamos: {
-      address: "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
         {
           inputs: [
             {
@@ -20,6 +25,94 @@ const deployedContracts = {
           name: "devolverEquipo",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          name: "inventario",
+          outputs: [
+            {
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "cantidadTotal",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "cantidadPrestada",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "existe",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "nombresEquipos",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "obtenerInventarioCompleto",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "nombre",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cantidadTotal",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cantidadPrestada",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "existe",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct SistemaPrestamos.Equipo[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -70,7 +163,7 @@ const deployedContracts = {
                 },
                 {
                   internalType: "uint256",
-                  name: "fechaPrestamo",
+                  name: "fechaAgendada",
                   type: "uint256",
                 },
                 {
@@ -151,6 +244,11 @@ const deployedContracts = {
               name: "_tipoEquipo",
               type: "string",
             },
+            {
+              internalType: "uint256",
+              name: "_fechaAgendada",
+              type: "uint256",
+            },
           ],
           name: "solicitarPrestamo",
           outputs: [],
@@ -209,7 +307,7 @@ const deployedContracts = {
             },
             {
               internalType: "uint256",
-              name: "fechaPrestamo",
+              name: "fechaAgendada",
               type: "uint256",
             },
             {
@@ -223,7 +321,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 23,
+      deployedOnBlock: 3,
     },
   },
 } as const;

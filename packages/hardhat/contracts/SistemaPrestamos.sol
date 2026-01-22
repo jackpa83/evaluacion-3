@@ -2,23 +2,46 @@
 pragma solidity ^0.8.19;
 
 contract SistemaPrestamos {
+    struct Equipo {
+        string nombre;
+        uint256 cantidadTotal;
+        uint256 cantidadPrestada;
+        bool existe;
+    }
+
     struct Prestamo {
         uint256 id;
-        address solicitante; // <--- Nuevo campo para seguridad
+        address solicitante;
         string nombre;
         string apellido;
         string cedula;
         string telefono;
         string trayecto;
         string tipoEquipo;
-        uint256 fechaPrestamo;
+        uint256 fechaAgendada;
         bool activo;
     }
 
-    uint256 public proximoId;
+    mapping(string => Equipo) public inventario;
+    string[] public nombresEquipos;
+
     mapping(uint256 => Prestamo) public todosLosPrestamos;
     mapping(address => uint256) public prestamoActualPorUsuario;
     uint256[] private IDs;
+    uint256 public proximoId;
+
+    constructor() {
+        _agregarEquipo("Video Beam", 2);
+        _agregarEquipo("Laboratorio de Programacion", 1);
+        _agregarEquipo("Laboratorio de Diseno", 1);
+        _agregarEquipo("Laboratorio de Diseno II", 1);
+        _agregarEquipo("Apoyo Docente", 1);
+    }
+
+    function _agregarEquipo(string memory _nombre, uint256 _cantidad) internal {
+        inventario[_nombre] = Equipo(_nombre, _cantidad, 0, true);
+        nombresEquipos.push(_nombre);
+    }
 
     function solicitarPrestamo(
         string memory _nombre,
@@ -26,27 +49,62 @@ contract SistemaPrestamos {
         string memory _cedula,
         string memory _telefono,
         string memory _trayecto,
-        string memory _tipoEquipo
+        string memory _tipoEquipo,
+        uint256 _fechaAgendada
     ) public {
+        require(inventario[_tipoEquipo].existe, "El equipo no existe en inventario.");
+
+        // Validar si hay disponibilidad
+        // Para simplificar el MVP y no complicar con fechas futuras,
+        // validamos disponibilidad inmediata o actual:
+        require(
+            inventario[_tipoEquipo].cantidadPrestada < inventario[_tipoEquipo].cantidadTotal,
+            "No hay disponibilidad para este equipo."
+        );
+
         uint256 idActual = prestamoActualPorUsuario[msg.sender];
-        require(!todosLosPrestamos[idActual].activo, "Ya tienes un equipo en prestamo.");
+        if (idActual != 0) {
+            require(!todosLosPrestamos[idActual].activo, "Ya tienes un prestamo activo.");
+        }
 
         proximoId++;
         todosLosPrestamos[proximoId] = Prestamo({
             id: proximoId,
-            solicitante: msg.sender, // Guardamos quien lo pidio
+            solicitante: msg.sender,
             nombre: _nombre,
             apellido: _apellido,
             cedula: _cedula,
             telefono: _telefono,
             trayecto: _trayecto,
             tipoEquipo: _tipoEquipo,
-            fechaPrestamo: block.timestamp,
+            fechaAgendada: _fechaAgendada,
             activo: true
         });
 
+        // Actualizamos inventario
+        inventario[_tipoEquipo].cantidadPrestada++;
+
         IDs.push(proximoId);
         prestamoActualPorUsuario[msg.sender] = proximoId;
+    }
+
+    function devolverEquipo(uint256 _id) public {
+        Prestamo storage p = todosLosPrestamos[_id];
+        require(p.activo, "Ya devuelto.");
+        require(p.solicitante == msg.sender, "No eres el dueno.");
+
+        p.activo = false;
+        // Liberamos el equipo en el inventario
+        inventario[p.tipoEquipo].cantidadPrestada--;
+    }
+
+    // Funcion para que el Select del frontend sea dinamico
+    function obtenerInventarioCompleto() public view returns (Equipo[] memory) {
+        Equipo[] memory lista = new Equipo[](nombresEquipos.length);
+        for (uint i = 0; i < nombresEquipos.length; i++) {
+            lista[i] = inventario[nombresEquipos[i]];
+        }
+        return lista;
     }
 
     function obtenerTodosLosPrestamos() public view returns (Prestamo[] memory) {
@@ -55,15 +113,5 @@ contract SistemaPrestamos {
             lista[i] = todosLosPrestamos[IDs[i]];
         }
         return lista;
-    }
-
-    function devolverEquipo(uint256 _id) public {
-        require(todosLosPrestamos[_id].id != 0, "El prestamo no existe.");
-        require(todosLosPrestamos[_id].activo, "El equipo ya fue devuelto.");
-
-        // SEGURIDAD: Solo el solicitante original puede devolverlo
-        require(todosLosPrestamos[_id].solicitante == msg.sender, "No eres el dueno de este prestamo.");
-
-        todosLosPrestamos[_id].activo = false;
     }
 }

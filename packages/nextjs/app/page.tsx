@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { NextPage } from "next";
-import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const LoanPage: NextPage = () => {
   const [form, setForm] = useState({
@@ -11,14 +11,21 @@ const LoanPage: NextPage = () => {
     cedula: "",
     telefono: "",
     trayecto: "",
-    tipoEquipo: "Video Bean",
+    tipoEquipo: "", // Lo dejamos vacío inicialmente para forzar la selección
+    fecha: "",
+  });
+
+  // 1. Leemos el inventario real desde el Smart Contract
+  const { data: equipos } = useScaffoldReadContract({
+    contractName: "SistemaPrestamos",
+    functionName: "obtenerInventarioCompleto",
+    watch: true,
   });
 
   const { writeContractAsync } = useScaffoldWriteContract({
     contractName: "SistemaPrestamos",
   });
 
-  // Validación numérica para Cédula (Máximo 8)
   const handleCedulaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
     if (value.length <= 8) setForm({ ...form, cedula: value });
@@ -29,24 +36,43 @@ const LoanPage: NextPage = () => {
     if (value.length <= 11) setForm({ ...form, telefono: value });
   };
 
+  // 2. Validamos que la fecha también esté presente
   const isFormIncomplete =
-    !form.nombre || !form.apellido || form.cedula.length < 7 || form.telefono.length < 10 || !form.trayecto;
+    !form.nombre ||
+    !form.apellido ||
+    form.cedula.length < 7 ||
+    form.telefono.length < 10 ||
+    !form.trayecto ||
+    !form.tipoEquipo ||
+    !form.fecha;
 
   const handleSolicitar = async () => {
     try {
+      // Convertimos la fecha a Timestamp (segundos)
+      const unixTime = BigInt(Math.floor(new Date(form.fecha).getTime() / 1000));
+
       await writeContractAsync({
         functionName: "solicitarPrestamo",
-        args: [form.nombre, form.apellido, form.cedula, form.telefono, form.trayecto, form.tipoEquipo],
+        args: [form.nombre, form.apellido, form.cedula, form.telefono, form.trayecto, form.tipoEquipo, unixTime],
+      });
+
+      setForm({
+        nombre: "",
+        apellido: "",
+        cedula: "",
+        telefono: "",
+        trayecto: "",
+        tipoEquipo: "",
+        fecha: "",
       });
     } catch (e: any) {
       console.log(e);
-      // toast.error("Error: " + (e.shortMessage || "Verifique sus datos."));
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center p-8">
-      <h1 className="text-3xl font-bold mb-4">Sistemas de prestamos de equipos y espacios</h1>
+      <h1 className="text-3xl font-bold mb-4">Sistema de préstamos de equipos y espacios</h1>
       <div className="card max-w-xl w-full bg-base-100 shadow-xl border border-gray-200">
         <div className="card-body p-8">
           <h2 className="card-title text-2xl font-bold mb-1">Solicitud de Equipo</h2>
@@ -109,6 +135,20 @@ const LoanPage: NextPage = () => {
               </div>
             </div>
 
+            {/* NUEVO: Campo de Fecha */}
+            <div className="form-control w-full">
+              <label className="label py-1">
+                <span className="label-text font-medium">¿Para cuándo lo necesita?</span>
+              </label>
+              <input
+                type="date"
+                className="input input-bordered w-full"
+                min={new Date().toISOString().split("T")[0]}
+                value={form.fecha}
+                onChange={e => setForm({ ...form, fecha: e.target.value })}
+              />
+            </div>
+
             <div className="form-control w-full">
               <label className="label py-1">
                 <span className="label-text font-medium">Trayecto</span>
@@ -122,6 +162,7 @@ const LoanPage: NextPage = () => {
               />
             </div>
 
+            {/* SELECT DINÁMICO: Lee los equipos del Smart Contract */}
             <div className="form-control w-full">
               <label className="label py-1">
                 <span className="label-text font-medium">Tipo de Equipo</span>
@@ -131,8 +172,15 @@ const LoanPage: NextPage = () => {
                 value={form.tipoEquipo}
                 onChange={e => setForm({ ...form, tipoEquipo: e.target.value })}
               >
-                <option>Video Bean</option>
-                <option>Laboratorio</option>
+                <option value="">Seleccione un equipo</option>
+                {equipos?.map(eq => {
+                  const disp = Number(eq.cantidadTotal) - Number(eq.cantidadPrestada);
+                  return (
+                    <option key={eq.nombre} value={eq.nombre} disabled={disp <= 0}>
+                      {eq.nombre} {disp > 0 ? `(${disp} disponibles)` : "(AGOTADO)"}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 

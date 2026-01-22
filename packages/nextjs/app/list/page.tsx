@@ -2,14 +2,18 @@
 
 import { useState } from "react";
 import type { NextPage } from "next";
+// Añadimos useAccount para la validación de seguridad
+import { useAccount } from "wagmi";
 import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const ListadoPage: NextPage = () => {
+  const { address: connectedAddress } = useAccount();
   const [selectedPrestamo, setSelectedPrestamo] = useState<any>(null);
 
   const { data: prestamos, isLoading } = useScaffoldReadContract({
     contractName: "SistemaPrestamos",
     functionName: "obtenerTodosLosPrestamos",
+    watch: true, // Importante para ver cambios de inventario en vivo
   });
 
   const { writeContractAsync: devolverEquipo } = useScaffoldWriteContract({
@@ -101,7 +105,8 @@ const ListadoPage: NextPage = () => {
                         >
                           Ver Reporte
                         </button>
-                        {p.activo && (
+                        {/* SEGURIDAD: Solo el solicitante puede ver el botón de devolver */}
+                        {p.activo && p.solicitante === connectedAddress && (
                           <button className="btn btn-sm btn-secondary" onClick={() => handleDevolver(p.id)}>
                             Devolver
                           </button>
@@ -119,7 +124,9 @@ const ListadoPage: NextPage = () => {
       {/* MODAL DETALLE COMPACTO */}
       <dialog id="modal_detalle" className="modal">
         <div className="modal-box max-w-sm border-t-8 border-primary p-6">
-          <h3 className="font-bold text-xl mb-4 border-b pb-2">Resumen de Operación</h3>
+          <h3 className="font-bold text-xl mb-4 border-b pb-2 text-center uppercase tracking-wider text-primary">
+            Ficha de Préstamo
+          </h3>
 
           {selectedPrestamo && (
             <div className="text-sm space-y-1">
@@ -129,7 +136,7 @@ const ListadoPage: NextPage = () => {
               </div>
               <div className="flex justify-between py-1 border-b border-base-200">
                 <span className="font-semibold opacity-70">Estudiante:</span>
-                <span>
+                <span className="font-bold">
                   {selectedPrestamo.nombre} {selectedPrestamo.apellido}
                 </span>
               </div>
@@ -143,18 +150,19 @@ const ListadoPage: NextPage = () => {
               </div>
               <div className="flex justify-between py-1 border-b border-base-200">
                 <span className="font-semibold opacity-70">Equipo:</span>
-                <span className="badge badge-sm badge-outline">{selectedPrestamo.tipoEquipo}</span>
+                <span className="badge badge-sm badge-outline font-bold">{selectedPrestamo.tipoEquipo}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-base-200">
-                <span className="font-semibold opacity-70">Fecha:</span>
-                <span className="text-[11px]">
-                  {new Date(Number(selectedPrestamo.fechaPrestamo) * 1000).toLocaleString("es-VE")}
+                <span className="font-semibold opacity-70 ">Fecha Agendada:</span>
+                <span className="font-bold ">
+                  {/* Cambiado a fechaAgendada del nuevo contrato */}
+                  {new Date(Number(selectedPrestamo.fechaAgendada) * 1000).toLocaleDateString("es-VE")}
                 </span>
               </div>
 
               <div className="mt-6 flex justify-center">
                 <div
-                  className={`badge badge-md font-bold w-full py-4 ${selectedPrestamo.activo ? "badge-success" : "badge-ghost"}`}
+                  className={`badge badge-md font-bold w-full py-4  shadow-sm ${selectedPrestamo.activo ? "badge-success" : "bg-slate-400 border-none"}`}
                 >
                   {selectedPrestamo.activo ? "ESTADO: ACTIVO" : "ESTADO: DEVUELTO"}
                 </div>
@@ -162,9 +170,9 @@ const ListadoPage: NextPage = () => {
             </div>
           )}
 
-          <div className="modal-action mt-6">
+          <div className="modal-action mt-6 justify-center">
             <form method="dialog">
-              <button className="btn btn-block btn-outline">Cerrar Reporte</button>
+              <button className="btn btn-outline">Cerrar Reporte</button>
             </form>
           </div>
         </div>
