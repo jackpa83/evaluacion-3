@@ -45,7 +45,8 @@ const LoanPage: NextPage = () => {
   };
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="flex flex-col items-center justify-center p-8">
+      <h1 className="text-3xl font-bold mb-4">Sistemas de prestamos de equipos y espacios</h1>
       <div className="card max-w-xl w-full bg-base-100 shadow-xl border border-gray-200">
         <div className="card-body p-8">
           <h2 className="card-title text-2xl font-bold mb-1">Solicitud de Equipo</h2>
