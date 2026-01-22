@@ -1,0 +1,36 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/SistemaPrestamos.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.19;\n\ncontract SistemaPrestamos {\n    struct Equipo {\n        string nombre;\n        uint256 cantidadTotal;\n        uint256 cantidadPrestada;\n        bool existe;\n    }\n\n    struct Prestamo {\n        uint256 id;\n        address solicitante;\n        string nombre;\n        string apellido;\n        string cedula;\n        string telefono;\n        string trayecto;\n        string tipoEquipo;\n        uint256 fechaAgendada;\n        bool activo;\n    }\n\n    mapping(string => Equipo) public inventario;\n    string[] public nombresEquipos;\n\n    mapping(uint256 => Prestamo) public todosLosPrestamos;\n    mapping(address => uint256) public prestamoActualPorUsuario;\n    uint256[] private IDs;\n    uint256 public proximoId;\n\n    constructor() {\n        _agregarEquipo(\"Video Beam\", 2);\n        _agregarEquipo(\"Laboratorio de Programacion\", 1);\n        _agregarEquipo(\"Laboratorio de Diseno\", 1);\n        _agregarEquipo(\"Laboratorio de Diseno II\", 1);\n        _agregarEquipo(\"Apoyo Docente\", 1);\n    }\n\n    function _agregarEquipo(string memory _nombre, uint256 _cantidad) internal {\n        inventario[_nombre] = Equipo(_nombre, _cantidad, 0, true);\n        nombresEquipos.push(_nombre);\n    }\n\n    function solicitarPrestamo(\n        string memory _nombre,\n        string memory _apellido,\n        string memory _cedula,\n        string memory _telefono,\n        string memory _trayecto,\n        string memory _tipoEquipo,\n        uint256 _fechaAgendada\n    ) public {\n        require(inventario[_tipoEquipo].existe, \"El equipo no existe en inventario.\");\n\n        // Validar si hay disponibilidad\n        // Para simplificar el MVP y no complicar con fechas futuras,\n        // validamos disponibilidad inmediata o actual:\n        require(\n            inventario[_tipoEquipo].cantidadPrestada < inventario[_tipoEquipo].cantidadTotal,\n            \"No hay disponibilidad para este equipo.\"\n        );\n\n        uint256 idActual = prestamoActualPorUsuario[msg.sender];\n        if (idActual != 0) {\n            require(!todosLosPrestamos[idActual].activo, \"Ya tienes un prestamo activo.\");\n        }\n\n        proximoId++;\n        todosLosPrestamos[proximoId] = Prestamo({\n            id: proximoId,\n            solicitante: msg.sender,\n            nombre: _nombre,\n            apellido: _apellido,\n            cedula: _cedula,\n            telefono: _telefono,\n            trayecto: _trayecto,\n            tipoEquipo: _tipoEquipo,\n            fechaAgendada: _fechaAgendada,\n            activo: true\n        });\n\n        // Actualizamos inventario\n        inventario[_tipoEquipo].cantidadPrestada++;\n\n        IDs.push(proximoId);\n        prestamoActualPorUsuario[msg.sender] = proximoId;\n    }\n\n    function devolverEquipo(uint256 _id) public {\n        Prestamo storage p = todosLosPrestamos[_id];\n        require(p.activo, \"Ya devuelto.\");\n        require(p.solicitante == msg.sender, \"No eres el dueno.\");\n\n        p.activo = false;\n        // Liberamos el equipo en el inventario\n        inventario[p.tipoEquipo].cantidadPrestada--;\n    }\n\n    // Funcion para que el Select del frontend sea dinamico\n    function obtenerInventarioCompleto() public view returns (Equipo[] memory) {\n        Equipo[] memory lista = new Equipo[](nombresEquipos.length);\n        for (uint i = 0; i < nombresEquipos.length; i++) {\n            lista[i] = inventario[nombresEquipos[i]];\n        }\n        return lista;\n    }\n\n    function obtenerTodosLosPrestamos() public view returns (Prestamo[] memory) {\n        Prestamo[] memory lista = new Prestamo[](IDs.length);\n        for (uint256 i = 0; i < IDs.length; i++) {\n            lista[i] = todosLosPrestamos[IDs[i]];\n        }\n        return lista;\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

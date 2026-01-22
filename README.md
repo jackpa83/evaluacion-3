@@ -1,80 +1,154 @@
-# 🏗 Scaffold-ETH 2
+# 💰 Préstamos DApp
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+Una aplicación descentralizada (DApp) para gestión de préstamos construida sobre la blockchain de Ethereum.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+## 📋 Descripción
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+Préstamos DApp es una plataforma descentralizada diseñada específicamente para los estudiantes de la UPTA, que permite solicitar, otorgar y gestionar préstamos de manera transparente y segura utilizando contratos inteligentes en la red Ethereum. La aplicación proporciona una interfaz intuitiva para interactuar con el ecosistema de préstamos descentralizados, facilitando el acceso a recursos financieros para la comunidad estudiantil.
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+### Características Principales
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+- 🔐 **Gestión Segura de Préstamos**: Contratos inteligentes auditados para transacciones seguras
+- 💸 **Solicitudes de Préstamo**: Los usuarios pueden solicitar préstamos de manera descentralizada
+- 📊 **Seguimiento en Tiempo Real**: Monitorea el estado de tus préstamos activos
+- 🔄 **Transparencia Total**: Todas las transacciones son verificables en la blockchain
+- 🌐 **Sin Intermediarios**: Interacción directa peer-to-peer mediante smart contracts
 
-## Requirements
+## 📜 Smart Contract Desplegado
 
-Before you begin, you need to install the following tools:
+### Red Sepolia (Testnet)
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
+**Dirección del Contrato:** `0x7a173A15d548b48C0283D450Ec3783bc5706F0e6`
+
+**Ver en Block Explorer:**  
+🔍 [Ver contrato en Sepolia Etherscan](https://sepolia.etherscan.io/address/0x7a173A15d548b48C0283D450Ec3783bc5706F0e6)
+
+## �️ Stack Tecnológico
+
+- **Frontend**: Next.js 14 con TypeScript
+- **Smart Contracts**: Solidity + Hardhat
+- **Wallet Integration**: RainbowKit
+- **Web3 Libraries**: Wagmi, Viem
+- **Styling**: Tailwind CSS
+
+## 📋 Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+- [Node.js](https://nodejs.org/en/download/) (>= v20.18.3)
+- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) o [v2+](https://yarnpkg.com/getting-started/install))
 - [Git](https://git-scm.com/downloads)
+- Una wallet de Ethereum (MetaMask recomendado)
 
-## Quickstart
+## 🚀 Inicio Rápido
 
-To get started with Scaffold-ETH 2, follow the steps below:
+### 1. Clonar el Repositorio
 
-1. Install dependencies if it was skipped in CLI:
-
+```bash
+git clone [URL_DEL_REPOSITORIO]
+cd prestamos-dapp
 ```
-cd my-dapp-example
+
+### 2. Instalar Dependencias
+
+```bash
 yarn install
 ```
 
-2. Run a local network in the first terminal:
+### 3. Configurar Variables de Entorno
 
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+DEPLOYER_PRIVATE_KEY=tu_private_key_aqui
+ALCHEMY_API_KEY=tu_alchemy_api_key
 ```
+
+### 4. Ejecutar Red Local
+
+En una terminal, inicia la red local de Hardhat:
+
+```bash
 yarn chain
 ```
 
-This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/hardhat/hardhat.config.ts`.
+### 5. Desplegar Contratos
 
-3. On a second terminal, deploy the test contract:
+En una segunda terminal, despliega los contratos:
 
-```
+```bash
+# Despliegue local
 yarn deploy
+
+# Despliegue en Sepolia
+yarn deploy --network sepolia
 ```
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
+### 6. Iniciar la Aplicación
 
-4. On a third terminal, start your NextJS app:
+En una tercera terminal, inicia la aplicación Next.js:
 
-```
+```bash
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+Visita la aplicación en: `http://localhost:3000`
 
-Run smart contract test with `yarn hardhat:test`
+## 📁 Estructura del Proyecto
 
-- Edit your smart contracts in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
+```
+prestamos-dapp/
+├── packages/
+│   ├── hardhat/          # Smart contracts y scripts de despliegue
+│   │   ├── contracts/    # Contratos inteligentes en Solidity
+│   │   ├── deploy/       # Scripts de despliegue
+│   │   └── test/         # Tests de contratos
+│   └── nextjs/           # Frontend de la aplicación
+│       ├── app/          # Páginas y rutas de Next.js
+│       ├── components/   # Componentes de React
+│       └── hooks/        # Custom hooks de Web3
+└── README.md
+```
 
+## 📝 Desarrollo
 
-## Documentation
+- **Editar Smart Contracts**: Modifica los archivos en `packages/hardhat/contracts`
+- **Editar Frontend**: Modifica la página principal en `packages/nextjs/app/page.tsx`
+- **Scripts de Despliegue**: Personaliza en `packages/hardhat/deploy`
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+## 🌐 Despliegue en Producción
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+Para desplegar en la red principal de Ethereum u otras redes:
 
-## Contributing to Scaffold-ETH 2
+1. Asegúrate de tener fondos suficientes en tu wallet
+2. Configura las credenciales de red en `packages/hardhat/hardhat.config.ts`
+3. Ejecuta el script de despliegue para la red deseada
 
-We welcome contributions to Scaffold-ETH 2!
+## 📚 Recursos
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+- [Documentación de Scaffold-ETH 2](https://docs.scaffoldeth.io)
+- [Documentación de Hardhat](https://hardhat.org/docs)
+- [Documentación de Next.js](https://nextjs.org/docs)
+- [Sepolia Testnet Faucet](https://sepoliafaucet.com/)
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Por favor:
+
+1. Forkea el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+## 👥 Autor
+
+[Tu Nombre] - [Tu Email/GitHub]
+
+## 🙏 Agradecimientos
+
+Construido con [Scaffold-ETH 2](https://scaffoldeth.io) - Un toolkit para construcción de dApps en Ethereum.

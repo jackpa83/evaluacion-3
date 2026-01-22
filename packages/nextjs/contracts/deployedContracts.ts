@@ -324,6 +324,325 @@ const deployedContracts = {
       deployedOnBlock: 3,
     },
   },
+  11155111: {
+    SistemaPrestamos: {
+      address: "0x7a173A15d548b48C0283D450Ec3783bc5706F0e6",
+      abi: [
+        {
+          inputs: [],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_id",
+              type: "uint256",
+            },
+          ],
+          name: "devolverEquipo",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          name: "inventario",
+          outputs: [
+            {
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "cantidadTotal",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "cantidadPrestada",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "existe",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "nombresEquipos",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "obtenerInventarioCompleto",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "nombre",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cantidadTotal",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "cantidadPrestada",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "existe",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct SistemaPrestamos.Equipo[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "obtenerTodosLosPrestamos",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "id",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "solicitante",
+                  type: "address",
+                },
+                {
+                  internalType: "string",
+                  name: "nombre",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "apellido",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "cedula",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "telefono",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "trayecto",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "tipoEquipo",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "fechaAgendada",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bool",
+                  name: "activo",
+                  type: "bool",
+                },
+              ],
+              internalType: "struct SistemaPrestamos.Prestamo[]",
+              name: "",
+              type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "prestamoActualPorUsuario",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "proximoId",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_nombre",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_apellido",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_cedula",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_telefono",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_trayecto",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "_tipoEquipo",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "_fechaAgendada",
+              type: "uint256",
+            },
+          ],
+          name: "solicitarPrestamo",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "todosLosPrestamos",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "id",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "solicitante",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "nombre",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "apellido",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "cedula",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "telefono",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "trayecto",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "tipoEquipo",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "fechaAgendada",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "activo",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+      deployedOnBlock: 10095181,
+    },
+  },
 } as const;
 
 export default deployedContracts satisfies GenericContractsDeclaration;
